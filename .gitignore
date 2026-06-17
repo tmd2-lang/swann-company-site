@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+.vercel
+.lovable/
+*.local
+.env
+
+# Raw Midjourney exports (600MB+). Production JPEGs live in editorial/, work/, library/
+src/assets/incoming/midjourney_session/
