@@ -26,19 +26,20 @@ function ScrubWord({
 }
 
 export function Manifesto() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.45"] });
+  const ref = useRef<HTMLParagraphElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.5"] });
   const reduce = !!useReducedMotion();
   const words = MANIFESTO_TEXT.split(" ");
 
   return (
-    <section ref={ref} className="relative px-6 md:px-10 py-32 md:py-56">
+    <section className="relative px-6 md:px-10 py-32 md:py-56">
       <div className="mx-auto max-w-[1600px]">
         <div className="mb-16 flex items-center justify-between text-eyebrow text-muted-foreground">
           <span>(01) Position</span>
           <span>Web design for med spas & skin clinics</span>
         </div>
         <p
+          ref={ref}
           aria-label={MANIFESTO_TEXT}
           className="text-display text-[8.5vw] md:text-[5.4vw] leading-[1.02] tracking-[-0.025em] flex flex-wrap"
         >

@@ -104,7 +104,7 @@ export const Route = createFileRoute("/services")({
 function ServicesPage() {
   return (
     <SiteShell>
-      <header className="border-b border-foreground/10 px-6 pb-16 md:px-10 md:pb-20">
+      <header className="border-b border-foreground/10 px-6 pb-16 pt-28 md:px-10 md:pb-24 md:pt-36">
         <div className="mx-auto max-w-[1500px]">
           <FadeUp>
             <p className="text-eyebrow text-muted-foreground">(07) Services</p>

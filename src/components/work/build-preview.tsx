@@ -4,12 +4,18 @@ import type { StudioProject } from "@/data/projects";
 
 export function BuildPreview({ project }: { project: StudioProject }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isInteractive, setIsInteractive] = useState(false);
+
+  const canInteract = isInteractive || isFullscreen;
 
   useEffect(() => {
-    if (!isFullscreen) return;
+    if (!canInteract) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsFullscreen(false);
+      if (e.key === "Escape") {
+        setIsFullscreen(false);
+        setIsInteractive(false);
+      }
     };
 
     const prevOverflow = document.body.style.overflow;
@@ -20,7 +26,7 @@ export function BuildPreview({ project }: { project: StudioProject }) {
       document.body.style.overflow = prevOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [isFullscreen]);
+  }, [canInteract]);
 
   if (project.embedAllowed) {
     const shellCls = isFullscreen
@@ -42,7 +48,15 @@ export function BuildPreview({ project }: { project: StudioProject }) {
           </div>
           <button
             type="button"
-            onClick={() => setIsFullscreen((v) => !v)}
+            onClick={() => {
+              if (isFullscreen) {
+                setIsFullscreen(false);
+                setIsInteractive(false);
+              } else {
+                setIsFullscreen(true);
+                setIsInteractive(true);
+              }
+            }}
             className="inline-flex shrink-0 items-center gap-2 rounded-sm px-3 py-1.5 font-mono-x text-[10px] uppercase tracking-wider text-foreground transition-colors hover:bg-foreground/5"
             aria-label={isFullscreen ? "Minimize preview" : "Fullscreen preview"}
           >
@@ -59,13 +73,34 @@ export function BuildPreview({ project }: { project: StudioProject }) {
             )}
           </button>
         </div>
-        <iframe
-          title={`${project.name} preview`}
-          src={project.previewUrl}
-          className={`${frameHeight} w-full border-0 bg-background`}
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        />
+        <div
+          className={`group relative ${isFullscreen ? "flex min-h-0 flex-1 flex-col" : ""}`}
+          onMouseLeave={() => {
+            if (!isFullscreen) setIsInteractive(false);
+          }}
+          data-lenis-prevent="true"
+        >
+          {!canInteract && (
+            <button
+              type="button"
+              className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center bg-transparent"
+              onClick={() => setIsInteractive(true)}
+              aria-label={`Interact with ${project.name} preview`}
+            >
+              <span className="rounded-full bg-foreground px-4 py-2 font-mono-x text-xs uppercase tracking-widest text-background opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                Click to interact
+              </span>
+            </button>
+          )}
+          <iframe
+            title={`${project.name} preview`}
+            src={project.previewUrl}
+            className={`${frameHeight} w-full border-0 bg-background ${canInteract ? "pointer-events-auto" : "pointer-events-none"}`}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
       </div>
     );
   }
